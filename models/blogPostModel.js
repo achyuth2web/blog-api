@@ -12,13 +12,16 @@ async function createBlogPost(newPost, userId) {
   });
 }
 
-async function getAllBlogPosts(filter) {
+async function getAllBlogPosts(filter, userId) {
   if (filter === "All") {
     return await prisma.blogPost.findMany({
+      where: {
+        createdBy: userId
+      },
       orderBy: {
         createdAt: "desc",
       },
-      include: { comments: true },
+      include: { user: true, comments: true },
     })
   } else if (filter === "Published") {
     return await prisma.blogPost.findMany({
@@ -28,7 +31,7 @@ async function getAllBlogPosts(filter) {
       orderBy: {
         createdAt: "desc",
       },
-      include: { comments: true },
+      include: { user: true, comments: true },
     })
   }
 }
@@ -44,8 +47,47 @@ async function updateIsPublished(postId, status) {
   })
 }
 
+async function getPublicBlogPosts() {
+  const posts = await prisma.blogPost.findMany({
+    where: {
+      isPublished: true
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: { 
+      user: true, 
+      comments: true 
+    },
+  })
+  return posts;
+}
+
+async function deleteBlogPost(postId) {
+  await prisma.blogPost.delete({
+    where: {
+      id: parseInt(postId, 10)
+    }
+  })
+}
+
+async function getBlogPostById(postId) {
+  return await prisma.blogPost.findFirst({
+    where: {
+      id: parseInt(postId, 10)
+    },
+    include: { 
+      user: true, 
+      comments: true 
+    },
+  })
+}
+
 module.exports = {
   createBlogPost,
   getAllBlogPosts,
-  updateIsPublished
+  updateIsPublished,
+  getPublicBlogPosts,
+  deleteBlogPost,
+  getBlogPostById,
 }

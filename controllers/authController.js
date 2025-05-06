@@ -20,7 +20,7 @@ async function userLoginPost(req, res) {
     }
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id, roleName: user.Role.name }, JWT_SECRET, { expiresIn: "1d" });
 
     return res.status(200).json({
       message: "Login successful",
@@ -30,7 +30,7 @@ async function userLoginPost(req, res) {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.Role.name
+        roleName: user.Role.name
       },
     });
   } catch (err) {

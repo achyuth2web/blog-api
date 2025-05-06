@@ -9,7 +9,7 @@ async function createUser(newUser) {
       lastName: newUser.lastName,
       email: newUser.email,
       password: newUser.password,
-      roleId: newUser.roleId
+      roleId: parseInt(newUser.roleId, 10)
     },
   });
 }

@@ -24,7 +24,7 @@ async function getAllBlogPosts(req, res) {
       return res.status(403).json({ message: "Forbidden: Unauthorized role" });
     }
 
-    const blogPosts = await blogPostModel.getAllBlogPosts(visibilityFilter)
+    const blogPosts = await blogPostModel.getAllBlogPosts(visibilityFilter, req.user.id)
     res.json({
       posts: blogPosts
     })
@@ -46,8 +46,45 @@ async function updatePublished(req, res) {
   }
 }
 
+async function deleteBlogPost(req, res) {
+  try {
+    const postId = req.params.postId;
+    await blogPostModel.deleteBlogPost(postId);
+    res.json({
+      message: "Post Deleted Successfully"
+    })
+  } catch(error) {
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
+async function getPublicBlogPosts (req, res) {
+  try {
+    const posts = await blogPostModel.getPublicBlogPosts('Published'); // or similar logic
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.error("Error fetching public blog posts:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+async function getBlogPostById(req, res) {
+  try {
+    const postId = req.params.postId;
+    const post = await blogPostModel.getBlogPostById(postId)
+    res.status(200).json({ post });
+  } catch (error) {
+    console.error("Error fetching blog post:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+}
+
+
 module.exports = {
   blogCreatePost,
   getAllBlogPosts,
-  updatePublished
+  updatePublished,
+  deleteBlogPost,
+  getPublicBlogPosts,
+  getBlogPostById
 }

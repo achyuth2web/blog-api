@@ -4,8 +4,11 @@ const passport = require("../config/passport");
 const blogPostController = require("../controllers/blogPostController")
 
 blogPostRouter.get("/", passport.authenticate("jwt", { session: false }), blogPostController.getAllBlogPosts);
+blogPostRouter.get("/public", blogPostController.getPublicBlogPosts);
+blogPostRouter.get("/:postId", passport.authenticate("jwt", { session: false }), blogPostController.getBlogPostById);
 blogPostRouter.post("/", passport.authenticate("jwt", { session: false }), authorizeRole("Author"), blogPostController.blogCreatePost);
 blogPostRouter.patch("/", passport.authenticate("jwt", { session: false }), authorizeRole("Author"), blogPostController.updatePublished);
+blogPostRouter.delete("/:postId", passport.authenticate("jwt", { session: false }), authorizeRole("Author"), blogPostController.deleteBlogPost);
 
 function authorizeRole(requiredRole) {
     return (req, res, next) => {
