@@ -1,10 +1,16 @@
 const express = require("express");
 const { PrismaClient } = require('@prisma/client');
 const passport = require("passport");
+const cors = require('cors');
 require("dotenv").config();
 require("./config/passport");
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.APP_URL, // or '*' for development
+    credentials: true // if using cookies or auth
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Body parser (moved up)
